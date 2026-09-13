@@ -5,12 +5,25 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/events/:eventid"
+  url: "{{baseUrl}}/events/:eventId"
   params:
-    - name: eventid
-      value: non-existing-eventid
+    - name: eventId
+      value: The event was not found
       type: path
   auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 404 Not Found", function() {
+          expect(res.getStatus()).to.equal(404);
+        });
+
+        test("Response returns an array", function() {
+          const body = res.getBody();
+          expect(body).to.equal("Event not found.");
+        });
 
 settings:
   encodeUrl: true
