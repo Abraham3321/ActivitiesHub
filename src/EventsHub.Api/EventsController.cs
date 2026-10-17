@@ -1,0 +1,26 @@
+using System;
+using EventsHub.Domain;
+using EventsHub.Persistence;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace EventsHub.Api.Controllers;
+
+public class EventsController(AppDbContext context) : BaseEventHubController
+{
+    [HttpGet]
+    public async Task<ActionResult<List<Event>>> GetEventsAsync()
+    {
+        return await context.Events.ToListAsync();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Event?>> GetEventDetailsAsync(string id)
+    {
+        var result = await context.Events.FindAsync(id);
+
+        if (result is null){ return NotFound("Event not found.");}
+
+        return result;
+    }
+}
