@@ -431,6 +431,7 @@ FodyWeavers.xsd
 *.db-shm
 *.db-wal
 src/API/Database/Database.db
+<<<<<<< HEAD
 
 # Logs
 logs
@@ -456,3 +457,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+=======
+>>>>>>> 2034b9c (Merge pull request #1 from Abraham3321/parcial01)
