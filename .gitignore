@@ -427,35 +427,14 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
 *.db
 *.db-shm
 *.db-wal
-src/API/Database/Database.db
-<<<<<<< HEAD
 
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-=======
->>>>>>> 2034b9c (Merge pull request #1 from Abraham3321/parcial01)
+# graphify: keep only graph.json, GRAPH_REPORT.md and the curated labels
+graphify-out/*
+!graphify-out/graph.json
+!graphify-out/GRAPH_REPORT.md
+!graphify-out/.graphify_labels.json
+!graphify-out/.graphify_labels.json.sig

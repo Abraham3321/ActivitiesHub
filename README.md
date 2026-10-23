@@ -1,81 +1,59 @@
-# ActivitiesHub
-ICI 2026 01
+# EventsHub
 
-# React + TypeScript + Vite
+School project (ICI 2026 01): a .NET 10 backend with a React frontend, kept as
+two independent apps in one repo — there is no shared build.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+| Path                        | What it is                                                                | README                                        |
+| --------------------------- | ------------------------------------------------------------------------- | --------------------------------------------- |
+| `src/EventsHub.Api`         | ASP.NET Core Web API — the only backend piece in the runtime request path | [README](src/EventsHub.Api/README.md)         |
+| `src/EventsHub.Application` | MediatR commands/queries and handlers (the use cases)                     | [README](src/EventsHub.Application/README.md) |
+| `src/EventsHub.Domain`      | The `Event` entity                                                        | [README](src/EventsHub.Domain/README.md)      |
+| `src/EventsHub.Persistence` | EF Core `AppDbContext`, migrations, seed data (SQLite)                    | [README](src/EventsHub.Persistence/README.md) |
+| `src/EventsHub.OpenApi`     | Standalone host that generates the OpenAPI document and typed client      | [README](src/EventsHub.OpenApi/README.md)     |
+| `web/`                      | React 19 + Vite + MUI single-page app                                     | [README](web/README.md)                       |
+| `tests/`                    | NUnit unit tests and a Bruno HTTP collection                              | see the Api README                            |
+| `docs/`                     | Architecture write-ups and course-material guides                         | [Architecture](docs/Architecture.md)          |
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## How the pieces connect
 
 ```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+web (React)  --HTTP-->  EventsHub.Api  --MediatR-->  EventsHub.Application  -->  EventsHub.Persistence  -->  SQLite
+                         controllers                   handlers                    AppDbContext               eventshub.db
+                                                             \__ EventsHub.Domain (Event) used by every layer
+EventsHub.OpenApi --loads Api assembly--> OpenAPI JSON --NSwag--> typed client   (build-time only)
 ```
+
+- A controller in `EventsHub.Api` builds a MediatR command or query and sends
+  it through `Mediator` (from `EventsHubBaseController`).
+- The matching handler in `EventsHub.Application` uses `AppDbContext`
+  directly (no repository layer) and returns `Event` objects, which are also
+  the API response shape.
+- `EventsHub.Api` references only `EventsHub.Application`; it reaches
+  `Persistence` and `Domain` through that project reference.
+
+## Quick start
+
+```powershell
+# backend (https://localhost:5001)
+dotnet run --project src/EventsHub.Api
+
+# frontend (https://localhost:3000)
+cd web
+npm install
+npm run dev
+```
+
+Other commands (build, tests, EF migrations, OpenAPI regeneration) are listed
+in the READMEs above and in [`CLAUDE.md`](CLAUDE.md).
+
+## Procedencia y validación de parcial02entrega
+
+Código importado de https://github.com/basaar24/ActivitiesHub/tree/parcial02,
+commit 050d297a9dc74abcb665afe6f50d0cf185ecf0c6. Se conserva la estructura
+original. Se adaptaron las pruebas de controladores a MediatR y la consulta de
+un evento inexistente para devolver HTTP 404.
+
+Requisitos: .NET 10 y Node.js 22.22.1 o posterior. Antes de iniciar la API HTTPS,
+ejecutar `dotnet dev-certs https --trust`. Instalar el frontend con `npm ci`.
+Las altas, ediciones y bajas de la interfaz se mantienen en memoria, como en
+el original; la API dispone de endpoints CRUD persistentes independientes.

@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventsHub.Api.Controllers;
 
-
-public class WeatherForecastController : BaseEventHubController
+public class WeatherForecastController : EventsHubBaseController
 {
     private static readonly string[] Summaries =
     [
@@ -21,8 +20,4 @@ public class WeatherForecastController : BaseEventHubController
         })
         .ToArray();
     }
-}
-
-public class EventHubControllerBase
-{
 }

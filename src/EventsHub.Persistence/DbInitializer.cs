@@ -1,15 +1,13 @@
-using System;
 using EventsHub.Domain;
 
 namespace EventsHub.Persistence;
 
-public class DbInitializer
+public static class DbInitializer
 {
     public static async Task SeedDataAsync(AppDbContext context)
     {
-        if(context.Events.Any()) return;
+        if (context.Events.Any()) return;
 
-        // Add the events to the database
         var events = new List<Event>
         {
             new() {
@@ -113,7 +111,9 @@ public class DbInitializer
                 Longitude = "-103.3475"
             }
         };
+
         context.Events.AddRange(events);
+
         await context.SaveChangesAsync();
     }
 }
